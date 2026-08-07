@@ -1,0 +1,242 @@
+1. Hello World Program
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!");
+    return 0;
+}
+
+Output:
+
+Hello, World!
+
+2. Addition of Two Numbers
+#include <stdio.h>
+
+int main() {
+    int a = 10, b = 20;
+    int sum = a + b;
+
+    printf("Sum = %d", sum);
+
+    return 0;
+}
+
+Output:
+
+Sum = 30
+
+
+3. Swap Two Numbers (Using Temporary Variable)
+#include <stdio.h>
+
+int main() {
+    int a = 5, b = 10, temp;
+
+    temp = a;
+    a = b;
+    b = temp;
+
+    printf("a = %d\n", a);
+    printf("b = %d", b);
+
+    return 0;
+}
+
+Output:
+
+a = 10
+b = 5
+
+
+4. Check Even or Odd
+#include <stdio.h>
+
+int main() {
+    int num = 8;
+
+    if(num % 2 == 0)
+        printf("Even");
+    else
+        printf("Odd");
+
+    return 0;
+}
+
+Output:
+
+Even
+5. Find Largest of Two Numbers
+#include <stdio.h>
+
+int main() {
+    int a = 15, b = 25;
+
+    if(a > b)
+        printf("%d is larger", a);
+    else
+        printf("%d is larger", b);
+
+    return 0;
+}
+
+Output:
+
+25 is larger
+
+
+6. Factorial of a Number
+#include <stdio.h>
+
+int main() {
+    int n = 5, i, fact = 1;
+
+    for(i = 1; i <= n; i++)
+        fact *= i;
+
+    printf("Factorial = %d", fact);
+
+    return 0;
+}
+
+Output:
+
+Factorial = 120
+
+
+7. Fibonacci Series
+#include <stdio.h>
+
+int main() {
+    int a = 0, b = 1, c, i;
+
+    printf("%d %d ", a, b);
+
+    for(i = 1; i <= 8; i++) {
+        c = a + b;
+        printf("%d ", c);
+        a = b;
+        b = c;
+    }
+
+    return 0;
+}
+
+Output:
+
+0 1 1 2 3 5 8 13 21 34
+
+
+8. Reverse of a Number
+#include <stdio.h>
+
+int main() {
+    int n = 1234, rev = 0;
+
+    while(n != 0) {
+        rev = rev * 10 + n % 10;
+        n /= 10;
+    }
+
+    printf("Reverse = %d", rev);
+
+    return 0;
+}
+
+
+Output:
+
+Reverse = 4321
+
+9. Check Prime Number
+#include <stdio.h>
+
+int main() {
+    int n = 17, i, flag = 0;
+
+    for(i = 2; i <= n / 2; i++) {
+        if(n % i == 0) {
+            flag = 1;
+            break;
+        }
+    }
+
+    if(flag == 0)
+        printf("Prime");
+    else
+        printf("Not Prime");
+
+    return 0;
+}
+
+Output:
+
+Prime
+
+
+10. Check Palindrome Number
+#include <stdio.h>
+
+int main() {
+    int n = 121, temp, rev = 0;
+
+    temp = n;
+
+    while(temp != 0) {
+        rev = rev * 10 + temp % 10;
+        temp /= 10;
+    }
+
+    if(n == rev)
+        printf("Palindrome");
+    else
+        printf("Not Palindrome");
+
+    return 0;
+}
+
+Output:
+
+Palindrome
+
+11. Sum of First N Natural Numbers
+#include <stdio.h>
+
+int main() {
+    int n = 10, sum = 0, i;
+
+    for(i = 1; i <= n; i++)
+        sum += i;
+
+    printf("Sum = %d", sum);
+
+    return 0;
+}
+
+Output:
+Sum = 55
+
+12. Multiplication Table
+#include <stdio.h>
+
+int main() {
+    int n = 5, i;
+
+    for(i = 1; i <= 10; i++)
+        printf("%d x %d = %d\n", n, i, n * i);
+
+    return 0;
+}
+
+Output:
+5 x 1 = 5
+5 x 2 = 10
+5 x 3 = 15
+5 x 4 = 20
+5 x 5 = 25
+5 x 6 = 30
+5 x 7 = 35
+5 x 8 = 40
+5 x 9 = 45
+5 x 10 = 50
+
