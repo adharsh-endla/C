@@ -1,0 +1,72 @@
+
+
+Experiment 1
+
+Algorithm / concept: XOR with 0 (i.e. bitwise XOR with zero does nothing)
+Example: Input string “Hello world”; for each character c, compute c ^ 0. Since XOR with 0 leaves bits unchanged, the output is same as input.
+
+#include <stdio.h>
+int main() {
+    char *s = "Hello world";
+    char *p = s;
+    printf("Original: %s\n", s);
+    printf("After XOR with 0: ");
+    while (*p) {
+        char c = *p;
+        char x = c ^ 0;  /* XOR with 0 */
+        putchar(x);
+        p++;
+    }
+    putchar('\n');
+    return 0;
+}
+OUTPUT:
+Original: Hello world
+After XOR with 0: Hello world
+
+
+Experiment 2
+Algorithm / concept: Bitwise AND / XOR with 127 (0x7F)
+•	c & 127 will mask off the highest bit (bit 7) — i.e. keep only lower 7 bits.
+•	c ^ 127 will flip all bits in the lower 7 bits (if ASCII in 7 bits).
+Example: For character 'H' (ASCII 72 = 0x48):
+•	72 & 127 = 72 (0x48)
+•	72 ^ 127 = 55 (0x37), which is ASCII '7'
+program in C (doing both AND and XOR for each char):
+
+#include <stdio.h>
+int main() 
+{
+    char *s = "Hello world";
+    char *p;
+    printf("Original: %s\n", s);
+   printf("\nAfter AND with 127:\n");
+    for (p = s; *p; p++)
+ {
+        char c = *p;
+        char y = c & 127;
+        putchar(y);
+    }
+    putchar('\n');
+    printf("\nAfter XOR with 127:\n");
+    for (p = s; *p; p++)
+ {
+        char c = *p;
+        char y = c ^ 127;
+        putchar(y);
+    }
+    putchar('\n');
+
+    return 0;
+}
+When you run it, &127 often leaves text intact (if characters use only lower 7 bits), and ^127 will produce gibberish (non-printable or odd characters) depending on ASCII.
+
+Output:
+Original: Hello world
+After AND with 127:
+Hello world
+After XOR with 127:
+7_
+
+
+
