@@ -1,0 +1,217 @@
+Week 3) 
+c)Hill Cipher: 
+1. Encryption Algorithm Steps
+To encrypt a plaintext message, you multiply a message vector by a secret key matrix. 
+1.	Choose a key size (n): Select the dimension of your square key matrix (e.g., 2 × 2, 3 × 3). 
+2.	Formulate the Key Matrix (K): Convert a chosen keyword into an n × n numerical matrix by mapping its letters to 0–25.
+o	Requirement: The matrix must be invertible. Its determinant must not be 0, and it must not share any common factors with 26 (the alphabet size). 
+3.	Format the Plaintext:
+o	Divide the plaintext into blocks of size n.
+o	If the final block has fewer than n letters, pad it with arbitrary letters (like 'X' or 'Z').
+o	Convert each block into an n × 1 column vector (P). 
+4.	Calculate the Ciphertext (C):
+o	Multiply the Key Matrix K by the Plaintext Vector P.
+o	Take the result modulo 26: \(C = (K \times P) \pmod{26}\). 
+5.	Convert back to letters: Map the resulting numerical column vector back to alphabetic characters to get the ciphertext.
+ 
+2. Decryption Algorithm Steps
+To decrypt the message, you do the exact reverse by multiplying the ciphertext vector by the inverse of the key matrix (K⁻¹). 
+1.	Find the Inverse Key Matrix (K⁻¹):
+o	Calculate the determinant of the original key matrix.
+o	Find the modular multiplicative inverse of the determinant (modulo 26).
+o	Calculate the adjoint matrix.
+o	Multiply the adjoint by the modular inverse of the determinant, and take everything modulo 26 to get K⁻¹. 
+2.	Format the Ciphertext:
+o	Divide the ciphertext into blocks of size n, converting each into an n × 1 vector (C). 
+3.	Calculate the Plaintext (P):
+o	Multiply the Inverse Key Matrix K⁻¹ by the Ciphertext Vector C.
+o	Take the result modulo 26: \(P = (K^{-1} \times C) \pmod{26}\). 
+4.	Convert back to letters: Map the numbers back to their corresponding alphabetic characters to recover the original message. 
+3. Mathematical Formulas
+•  Encryption: c=(k*p)(mod26)
+•  Decryption: p=(k-1*C)(mod26)
+
+Program:
+import java.util.Scanner;
+
+public class HillCipher {
+
+    static int[][] keyMatrix = {
+        {6, 24, 1},
+        {13, 16, 10},
+        {20, 17, 15}
+    }; // Invertible modulo 26
+
+    // Find modulo 26 of inverse matrix
+    static int[][] inverseKeyMatrix;
+
+    // Convert character to int (A=0,...,Z=25)
+    static int charToInt(char c) {
+        return c - 'A';
+    }
+
+    // Convert int to character
+    static char intToChar(int i) {
+        return (char) (i + 'A');
+    }
+
+    // Multiply matrix with vector and mod 26
+    static int[] multiply(int[][] matrix, int[] vector) {
+        int[] result = new int[3];
+        for (int i = 0; i < 3; i++) {
+            result[i] = 0;
+            for (int j = 0; j < 3; j++) {
+                result[i] += matrix[i][j] * vector[j];
+            }
+            result[i] %= 26;
+        }
+        return result;
+    }
+
+    // Find modular inverse of determinant
+    static int modInverse(int a, int m) {
+        a = a % m;
+        for (int x = 1; x < m; x++)
+            if ((a * x) % m == 1)
+                return x;
+        return -1;
+    }
+
+    // Find determinant of 3x3 matrix mod 26
+    static int determinant(int[][] matrix) {
+        int det = matrix[0][0]*(matrix[1][1]*matrix[2][2] - matrix[1][2]*matrix[2][1])
+                - matrix[0][1]*(matrix[1][0]*matrix[2][2] - matrix[1][2]*matrix[2][0])
+                + matrix[0][2]*(matrix[1][0]*matrix[2][1] - matrix[1][1]*matrix[2][0]);
+        det = det % 26;
+        if (det < 0) det += 26;
+        return det;
+    }
+
+    // Get cofactor of 3x3 matrix
+    static int[][] cofactorMatrix(int[][] matrix) {
+        int[][] cofactor = new int[3][3];
+        cofactor[0][0] = (matrix[1][1]*matrix[2][2] - matrix[1][2]*matrix[2][1]) % 26;
+        cofactor[0][1] = -(matrix[1][0]*matrix[2][2] - matrix[1][2]*matrix[2][0]) % 26;
+        cofactor[0][2] = (matrix[1][0]*matrix[2][1] - matrix[1][1]*matrix[2][0]) % 26;
+
+        cofactor[1][0] = -(matrix[0][1]*matrix[2][2] - matrix[0][2]*matrix[2][1]) % 26;
+        cofactor[1][1] = (matrix[0][0]*matrix[2][2] - matrix[0][2]*matrix[2][0]) % 26;
+        cofactor[1][2] = -(matrix[0][0]*matrix[2][1] - matrix[0][1]*matrix[2][0]) % 26;
+
+        cofactor[2][0] = (matrix[0][1]*matrix[1][2] - matrix[0][2]*matrix[1][1]) % 26;
+        cofactor[2][1] = -(matrix[0][0]*matrix[1][2] - matrix[0][2]*matrix[1][0]) % 26;
+        cofactor[2][2] = (matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]) % 26;
+
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++) {
+                cofactor[i][j] = cofactor[i][j] % 26;
+                if (cofactor[i][j] < 0)
+                    cofactor[i][j] += 26;
+            }
+
+        return cofactor;
+    }
+
+    // Transpose matrix
+    static int[][] transpose(int[][] matrix) {
+        int[][] transposed = new int[3][3];
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                transposed[i][j] = matrix[j][i];
+        return transposed;
+    }
+
+    // Inverse of 3x3 matrix mod 26
+    static int[][] inverseMatrix(int[][] matrix) {
+        int det = determinant(matrix);
+        int invDet = modInverse(det, 26);
+
+        if (invDet == -1) {
+            throw new IllegalArgumentException("Matrix is not invertible modulo 26.");
+        }
+
+        int[][] cofactor = cofactorMatrix(matrix);
+        int[][] adjugate = transpose(cofactor);
+
+        int[][] inverse = new int[3][3];
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++) {
+                inverse[i][j] = (adjugate[i][j] * invDet) % 26;
+                if (inverse[i][j] < 0)
+                    inverse[i][j] += 26;
+            }
+
+        return inverse;
+    }
+
+    // Encrypt the plaintext using Hill cipher
+    static String encrypt(String plaintext) {
+        plaintext = plaintext.toUpperCase().replaceAll("[^A-Z]", "");
+
+        // Pad with X to multiple of 3
+        while (plaintext.length() % 3 != 0) {
+            plaintext += "X";
+        }
+
+        StringBuilder ciphertext = new StringBuilder();
+
+        for (int i = 0; i < plaintext.length(); i += 3) {
+            int[] block = {
+                charToInt(plaintext.charAt(i)),
+                charToInt(plaintext.charAt(i + 1)),
+                charToInt(plaintext.charAt(i + 2))
+            };
+            int[] encryptedBlock = multiply(keyMatrix, block);
+            for (int val : encryptedBlock) {
+                ciphertext.append(intToChar(val));
+            }
+        }
+
+        return ciphertext.toString();
+    }
+
+    // Decrypt the ciphertext using Hill cipher
+    static String decrypt(String ciphertext) {
+        ciphertext = ciphertext.toUpperCase().replaceAll("[^A-Z]", "");
+
+        if (inverseKeyMatrix == null) {
+            inverseKeyMatrix = inverseMatrix(keyMatrix);
+        }
+
+        StringBuilder plaintext = new StringBuilder();
+
+        for (int i = 0; i < ciphertext.length(); i += 3) {
+            int[] block = {
+                charToInt(ciphertext.charAt(i)),
+                charToInt(ciphertext.charAt(i + 1)),
+                charToInt(ciphertext.charAt(i + 2))
+            };
+            int[] decryptedBlock = multiply(inverseKeyMatrix, block);
+            for (int val : decryptedBlock) {
+                plaintext.append(intToChar(val));
+            }
+        }
+
+        return plaintext.toString();
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter plaintext: ");
+        String input = scanner.nextLine();
+
+        String encrypted = encrypt(input);
+        System.out.println("Encrypted Text: " + encrypted);
+
+        String decrypted = decrypt(encrypted);
+        System.out.println("Decrypted Text: " + decrypted);
+    }
+}
+
+
+Output:
+Enter plaintext: ACT
+Encrypted Text: POH
+Decrypted Text: ACT
+
