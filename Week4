@@ -1,0 +1,95 @@
+Data Encryption Standard (DES)
+Aim
+To encrypt and decrypt data using the Data Encryption Standard (DES) algorithm.
+Definition
+DES (Data Encryption Standard) is a symmetric-key block cipher. It uses the same secret key for both encryption and decryption.
+•	Developed by: IBM 
+•	Standardized by: National Institute of Standards and Technology (originally adopted by its predecessor, the National Bureau of Standards) 
+•	Block Size: 64 bits 
+•	Key Size: 64 bits (56 bits are used for encryption, 8 bits are used for parity) 
+•	Number of Rounds: 16 
+ 
+Features of DES
+•	Symmetric encryption algorithm 
+•	Encrypts data in 64-bit blocks 
+•	Uses a 56-bit effective key 
+•	Performs 16 rounds of encryption 
+•	Fast in hardware implementations 
+•	Considered insecure today because the key size is too small for modern security needs 
+ 
+DES Encryption Process
+Plain Text (64 bits)
+        │
+Initial Permutation (IP)
+        │
+Split into Left (L0) and Right (R0)
+        │
+16 Feistel Rounds
+        │
+Swap Left and Right
+        │
+Final Permutation (FP)
+        │
+Cipher Text
+ 
+Algorithm
+Encryption
+1.	Read the plaintext. 
+2.	Generate a 56-bit key. 
+3.	Apply the Initial Permutation (IP). 
+4.	Divide the data into left and right halves. 
+5.	Perform 16 Feistel rounds: 
+o	Expand the right half. 
+o	XOR it with the round key. 
+o	Apply substitution using S-boxes. 
+o	Apply permutation. 
+o	XOR the result with the left half. 
+o	Swap the halves. 
+6.	Apply the Final Permutation (FP). 
+7.	Produce the ciphertext. 
+Decryption
+1.	Read the ciphertext. 
+2.	Use the same secret key. 
+3.	Apply the 16 rounds in reverse key order. 
+4.	Recover the original plaintext. 
+ 
+
+
+Program:
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.util.Base64;
+
+public class DESExample {
+    public static void main(String[] args) throws Exception {
+        String plaintext = "HELLO WORLD";
+
+        // Generate DES key
+        KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+        SecretKey key = keyGen.generateKey();
+
+        // Create cipher for DES (ECB + PKCS5Padding)
+        Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+        // Encrypt
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes("UTF-8"));
+        String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
+        System.out.println("Encrypted (Base64): " + encryptedBase64);
+
+        // Decrypt
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedBase64));
+        String decrypted = new String(decryptedBytes, "UTF-8");
+        System.out.println("Decrypted: " + decrypted);
+    }
+}
+
+
+Output:
+
+Encrypted (Base64): k92syetLi28XzodR+nMZGg==
+Decrypted: HELLO WORLD
+
