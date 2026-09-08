@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <string.h>
+
+char productions[10][10];
+char first[10][10];
+int n;
+
+void findFirst(int i)
+{
+    char c = productions[i][0];
+
+    if (productions[i][2] >= 'a' &&
+        productions[i][2] <= 'z')
+    {
+        first[i][0] = productions[i][2];
+        first[i][1] = '\0';
+    }
+}
+
+int main()
+{
+    printf("Enter no. of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions (eg. A=aB):\n");
+
+    for (int i = 0; i < n; i++)
+        scanf("%s", productions[i]);
+
+    for (int i = 0; i < n; i++)
+        findFirst(i);
+
+    printf("\nFIRST sets:\n");
+
+    for (int i = 0; i < n; i++)
+        printf("FIRST(%c) = {%c}\n",
+               productions[i][0], first[i][0]);
+
+    return 0;
+}
