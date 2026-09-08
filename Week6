@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+int main()
+{
+    int n, i, flag = 0;
+    char var[10], type[10][10], c;
+
+    printf("Enter number of variables: ");
+    scanf("%d", &n);
+
+    for(i = 0; i < n; i++)
+    {
+        printf("Enter variable: ");
+        scanf("%s", &var[i]);
+
+        printf("Enter type (float-f, int-i): ");
+        scanf("%s", type[i]);
+
+        if(type[i][0] == 'f')
+            flag = 1;
+    }
+
+    printf("Enter expression (end with $): ");
+    getchar();
+
+    while((c = getchar()) != '$')
+        if(c == '/')
+            flag = 1;
+
+    for(i = 0; i < n; i++)
+    {
+        if(c == var[i])
+        {
+            if(flag == 1 && type[i][0] != 'f')
+                printf("Identifier %c must be a float type..!!", var[i]);
+            else
+                printf("The datatype is correctly defined..!!");
+            break;
+        }
+    }
+
+    return 0;
+}
