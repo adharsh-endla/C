@@ -1,0 +1,49 @@
+%{
+#include <stdio.h>
+#include <ctype.h>
+%}
+
+%token LETTER DIGIT
+
+%%
+
+expr : expr '+' expr
+     | expr '-' expr
+     | expr '*' expr
+     | expr '/' expr
+     | '(' expr ')'
+     | LETTER
+     | DIGIT
+     ;
+
+%%
+
+int main()
+{
+    printf("Enter an expression: ");
+    yyparse();
+    return 0;
+}
+
+int yyerror()
+{
+    printf("Invalid expression\n");
+    return 0;
+}
+
+lex.file
+%{
+#include "y.tab.h"
+%}
+
+%%
+[a-zA-Z]    return LETTER;
+[0-9]       return DIGIT;
+[+\-*/()]   return yytext[0];
+[ \t\n]     ;
+%%
+
+int yywrap()
+{
+    return 1;
+}
