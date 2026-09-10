@@ -1,0 +1,25 @@
+import java.security.MessageDigest;
+import java.util.Base64;
+
+class main {
+    public static void main(String[] args) throws Exception {
+
+        String input = "Hello world";
+
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+
+        byte[] digestBytes = md.digest(input.getBytes("UTF-8"));
+
+        StringBuilder sb = new StringBuilder();
+
+        for (byte b : digestBytes) {
+            sb.append(String.format("%02x", b & 0xff));
+        }
+
+        System.out.println("SHA-1 (hex): " + sb.toString());
+
+        String b64 = Base64.getEncoder().encodeToString(digestBytes);
+
+        System.out.println("SHA-1 (Base64): " + b64);
+    }
+}
