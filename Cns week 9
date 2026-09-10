@@ -1,0 +1,75 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Diffie-Hellman Demo</title>
+</head>
+<body>
+    <h1>Diffie-Hellman Key Exchange Demo</h1>
+    <button id="start">Start DH</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function diffieHellmanDemo() {
+            const subtle = window.crypto.subtle;
+
+            const params = {
+                name: "ECDH",
+                namedCurve: "P-256"
+            };
+
+            const keyPairA = await subtle.generateKey(
+                params,
+                true,
+                ["deriveKey", "deriveBits"]
+            );
+
+            const keyPairB = await subtle.generateKey(
+                params,
+                true,
+                ["deriveKey", "deriveBits"]
+            );
+
+            const pubA = await subtle.exportKey(
+                "raw",
+                keyPairA.publicKey
+            );
+
+            const pubB = await subtle.exportKey(
+                "raw",
+                keyPairB.publicKey
+            );
+
+            const sharedA = await subtle.deriveBits(
+                {
+                    name: "ECDH",
+                    public: keyPairB.publicKey
+                },
+                keyPairA.privateKey,
+                256
+            );
+
+            const sharedB = await subtle.deriveBits(
+                {
+                    name: "ECDH",
+                    public: keyPairA.publicKey
+                },
+                keyPairB.privateKey,
+                256
+            );
+
+            const bufToHex = buf =>
+                Array.from(new Uint8Array(buf))
+                    .map(b => b.toString(16).padStart(2, "0"))
+                    .join("");
+
+            document.getElementById("output").textContent =
+                "Public A: " + bufToHex(pubA) + "\n" +
+                "Public B: " + bufToHex(pubB) + "\n" +
+                "Shared secret A: " + bufToHex(sharedA) + "\n" +
+                "Shared secret B: " + bufToHex(sharedB) + "\n";
+        }
+
+        document.getElementById("start").onclick = diffieHellmanDemo;
+    </script>
+</body>
+</html>
