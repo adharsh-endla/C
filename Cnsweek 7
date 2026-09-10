@@ -1,0 +1,125 @@
+import java.util.Base64;
+import java.util.Scanner;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+class main {
+
+    static class RC4 {
+        private int[] S = new int[256];
+        private int[] T = new int[256];
+        private int keyLength;
+
+        public RC4(String key) {
+            keyLength = key.length();
+
+            for (int i = 0; i < 256; i++) {
+                S[i] = i;
+                T[i] = key.charAt(i % keyLength);
+            }
+
+            initialize();
+        }
+
+        private void initialize() {
+            int j = 0;
+
+            for (int i = 0; i < 256; i++) {
+                j = (j + S[i] + T[i]) % 256;
+
+                int temp = S[i];
+                S[i] = S[j];
+                S[j] = temp;
+            }
+        }
+
+        public byte[] encryptDecrypt(byte[] input) {
+            int i = 0, j = 0;
+            byte[] result = new byte[input.length];
+
+            for (int k = 0; k < input.length; k++) {
+                i = (i + 1) % 256;
+                j = (j + S[i]) % 256;
+
+                int temp = S[i];
+                S[i] = S[j];
+                S[j] = temp;
+
+                int t = (S[i] + S[j]) % 256;
+                int keystreamByte = S[t];
+
+                result[k] = (byte) (input[k] ^ keystreamByte);
+            }
+
+            return result;
+        }
+    }
+
+    public static String encryptBlowfish(String plaintext, String key)
+            throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "Blowfish");
+        Cipher cipher = Cipher.getInstance("Blowfish");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encrypted = cipher.doFinal(plaintext.getBytes());
+        return Base64.getEncoder().encodeToString(encrypted);
+    }
+
+    public static String decryptBlowfish(String encryptedBase64, String key)
+            throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "Blowfish");
+        Cipher cipher = Cipher.getInstance("Blowfish");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decrypted =
+                cipher.doFinal(Base64.getDecoder().decode(encryptedBase64));
+        return new String(decrypted);
+    }
+
+    public static void main(String[] args) {
+        try {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("----- RC4 Encryption -----");
+            System.out.print("Enter RC4 key: ");
+            String rc4Key = scanner.nextLine();
+
+            System.out.print("Enter text to encrypt using RC4: ");
+            String rc4Text = scanner.nextLine();
+
+            RC4 rc4 = new RC4(rc4Key);
+            byte[] rc4Encrypted = rc4.encryptDecrypt(rc4Text.getBytes());
+
+            System.out.print("RC4 Encrypted (hex): ");
+
+            for (byte b : rc4Encrypted) {
+                System.out.printf("%02X ", b);
+            }
+
+            RC4 rc4Decrypt = new RC4(rc4Key);
+            byte[] rc4Decrypted =
+                    rc4Decrypt.encryptDecrypt(rc4Encrypted);
+
+            System.out.println("\nRC4 Decrypted: " +
+                    new String(rc4Decrypted));
+
+            System.out.println("\n----- Blowfish Encryption -----");
+
+            String blowfishKey = "mysecurekey";
+            String blowfishText = "Hello world";
+
+            String encryptedBlowfish =
+                    encryptBlowfish(blowfishText, blowfishKey);
+
+            System.out.println("Blowfish Encrypted (Base64): " +
+                    encryptedBlowfish);
+
+            String decryptedBlowfish =
+                    decryptBlowfish(encryptedBlowfish, blowfishKey);
+
+            System.out.println("Blowfish Decrypted: " +
+                    decryptedBlowfish);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
