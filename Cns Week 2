@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main()
+{
+    char *s = "Hello world";
+    char *p;
+
+    printf("Original: %s\n", s);
+
+    printf("\nAfter AND with 127:\n");
+    for (p = s; *p; p++)
+    {
+        char c = *p;
+        char y = c & 127;
+        putchar(y);
+    }
+
+    putchar('\n');
+
+    printf("\nAfter XOR with 127:\n");
+    for (p = s; *p; p++)
+    {
+        char c = *p;
+        char y = c ^ 127;
+        putchar(y);
+    }
+
+    putchar('\n');
+
+    return 0;
+}
