@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int main() {
+    char *s = "Hello world";
+    char *p = s;
+
+    printf("Original: %s\n", s);
+    printf("After XOR with 0: ");
+
+    while (*p) {
+        char c = *p;
+        char x = c ^ 0;  /* XOR with 0 */
+        putchar(x);
+        p++;
+    }
+
+    putchar('\n');
+    return 0;
+}
