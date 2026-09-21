@@ -1,0 +1,95 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class SubstitutionCipher {
+
+    // Substitution map (encryption key)
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+    private static final String SUBSTITUTE =
+        "QWERTYUIOPASDFGHJKLZXCVBNM";
+
+    // Create a map from plaintext letter to cipher letter
+    private static Map<Character, Character> createEncryptionMap() {
+        Map<Character, Character> map = new HashMap<>();
+
+        for (int i = 0; i < ALPHABET.length(); i++) {
+            map.put(ALPHABET.charAt(i), SUBSTITUTE.charAt(i));
+        }
+
+        return map;
+    }
+
+    // Create a map from cipher letter to plaintext letter (for decryption)
+    private static Map<Character, Character> createDecryptionMap() {
+        Map<Character, Character> map = new HashMap<>();
+
+        for (int i = 0; i < ALPHABET.length(); i++) {
+            map.put(SUBSTITUTE.charAt(i), ALPHABET.charAt(i));
+        }
+
+        return map;
+    }
+
+    // Encrypt using substitution cipher
+    public static String encrypt(String plaintext,
+                                 Map<Character, Character> map) {
+        StringBuilder encrypted = new StringBuilder();
+
+        for (char ch : plaintext.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                char lower = Character.toLowerCase(ch);
+                char substituted = map.get(lower);
+
+                if (Character.isUpperCase(ch)) {
+                    encrypted.append(Character.toUpperCase(substituted));
+                } else {
+                    encrypted.append(substituted);
+                }
+            } else {
+                encrypted.append(ch);
+            }
+        }
+
+        return encrypted.toString();
+    }
+
+    // Decrypt using substitution cipher
+    public static String decrypt(String ciphertext,
+                                 Map<Character, Character> map) {
+        StringBuilder decrypted = new StringBuilder();
+
+        for (char ch : ciphertext.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                char upper = Character.toUpperCase(ch);
+                char substituted = map.get(upper);
+
+                if (Character.isUpperCase(ch)) {
+                    decrypted.append(Character.toUpperCase(substituted));
+                } else {
+                    decrypted.append(substituted);
+                }
+            } else {
+                decrypted.append(ch);
+            }
+        }
+
+        return decrypted.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        Map<Character, Character> encryptionMap = createEncryptionMap();
+        Map<Character, Character> decryptionMap = createDecryptionMap();
+
+        System.out.print("Enter text to encrypt: ");
+        String input = scanner.nextLine();
+
+        String encrypted = encrypt(input, encryptionMap);
+        String decrypted = decrypt(encrypted, decryptionMap);
+
+        System.out.println("\nEncrypted Text: " + encrypted);
+        System.out.println("Decrypted Text: " + decrypted);
+    }
+}
